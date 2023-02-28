@@ -1,5 +1,6 @@
 <?php
 require_once('templates/header.php');
+require_once('lib/tools.php');
 require_once('lib/recipe.php');
 
 $pdo = new PDO('mysql:host=localhost;dbname=cuisinea;charset=utf8mb4;', 'root', 'root');
@@ -12,12 +13,17 @@ $query->bindParam(':id', $id, PDO::PARAM_INT);
 $query->execute();
 $recipe = $query->fetch();
 
-if ($recipe['image'] === null) {
-    $imagePath = _ASSETS_IMG_PATH_.'recipe_default.jpg';
-} else {
-    $imagePath = _RECIPES_IMG_PATH_.$recipe['image'];
-};
+if ($recipe) {
 
+    if ($recipe['image'] === null) {
+        $imagePath = _ASSETS_IMG_PATH_.'recipe_default.jpg';
+    } else {
+        $imagePath = _RECIPES_IMG_PATH_.$recipe['image'];
+    };
+    
+    $ingredients = linesToArray($recipe['ingredients']);
+    $instructions = linesToArray($recipe['instructions']);
+    
 ?>
 
 
@@ -30,6 +36,32 @@ if ($recipe['image'] === null) {
         <p class="lead"><?=$recipe['description'];?></p>
     </div>
 </div>
+
+<div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+    <h2>Ingrédients</h2>
+    <ul class="list-group">
+        <?php foreach ($ingredients as $key => $ingredient) { ?>
+            <li class="list-group-item"><?=$ingredient;?></li>
+        <?php } ?>
+    </ul>
+</div>
+
+<div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+    <h2>Instructions</h2>
+    <ol class="list-group">
+        <?php foreach ($instructions as $key => $instruction) { ?>
+            <li class="list-group-item"><?=$instruction;?></li>
+        <?php } ?>
+    </ol>
+</div>
+
+<?php } else { ?>
+    <div class="row text-center">
+        <h1>Recette introuvable</h1>
+    </div>
+<?php } ?>
+
+<?php ?>
 
 
 <?php
