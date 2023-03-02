@@ -8,3 +8,5 @@ function getCategories(PDO $pdo)
   $query->execute();
   return $query->fetchAll();
 }
+
+?>
